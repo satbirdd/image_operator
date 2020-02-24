@@ -22,6 +22,11 @@ const (
 	TextPositionConcateTop
 	// 文字不叠加在图片上，位置在图片下面
 	TextPositionConcateButton
+
+	defaultMarginTop    = 10.0
+	defaultMarginBottom = 10.0
+	defaultMarginLeft   = 10.0
+	defaultMarginRight  = 10.0
 )
 
 var (
@@ -45,16 +50,20 @@ func (b Bounds) ImgBounds() image.Rectangle {
 
 type TextSetting struct {
 	// Font     *truetype.Font
-	FontPath    string
-	FontSize    float64
-	LineSpacing float64
-	Dpi         float64
-	Position    int
-	Color       *color.RGBA
-	BgColor     *color.RGBA
+	FontPath     string
+	FontSize     float64
+	LineSpacing  float64
+	MarginTop    *float64
+	MarginBottom *float64
+	MarginLeft   *float64
+	MarginRight  *float64
+	Dpi          float64
+	Position     int
+	Color        *color.RGBA
+	BgColor      *color.RGBA
 }
 
-func (st TextSetting) Valid() (bool, error) {
+func (st *TextSetting) Valid() (bool, error) {
 	if st.FontPath == "" {
 		return false, fmt.Errorf("请指定字体路径")
 	}
@@ -85,6 +94,21 @@ func (st TextSetting) Valid() (bool, error) {
 
 	if st.BgColor == nil {
 		return false, fmt.Errorf("请指定背景颜色")
+	}
+
+	if st.MarginBottom == nil {
+		marginB := defaultMarginBottom
+		st.MarginBottom = &marginB
+	}
+
+	if st.MarginTop == nil {
+		marginT := defaultMarginTop
+		st.MarginTop = &marginT
+	}
+
+	if st.MarginLeft == nil {
+		marginL := defaultMarginLeft
+		st.MarginLeft = &marginL
 	}
 
 	return true, nil
@@ -154,6 +178,14 @@ func calcualteBounds(dc *gg.Context, img image.Image, textLines []string, settin
 	textHeight = float64(len(newLines)) * dc.FontHeight() * setting.LineSpacing
 	textHeight -= (setting.LineSpacing - 1) * dc.FontHeight()
 	textHeight = math.Ceil(textHeight)
+
+	if setting.MarginTop != nil {
+		textHeight += *setting.MarginTop
+	}
+
+	if setting.MarginBottom != nil {
+		textHeight += *setting.MarginBottom
+	}
 
 	switch setting.Position {
 	case TextPositionOverlapTop:
@@ -237,9 +269,17 @@ func drawTextLines(dc *gg.Context, textLines []string, bounds Bounds, setting Te
 	dc.SetRGBA255(int(r), int(g), int(b), int(a))
 
 	textY := float64(bounds.TextY)
+	if setting.MarginTop != nil {
+		textY += *setting.MarginTop
+	}
+
+	textX := 0.0
+	if setting.MarginLeft != nil {
+		textX += *setting.MarginLeft
+	}
 
 	for _, str := range textLines {
-		dc.DrawStringWrapped(str, 0, textY, 0, 0, float64(bounds.X), setting.LineSpacing, gg.AlignLeft)
+		dc.DrawStringWrapped(str, textX, textY, 0, 0, float64(bounds.X), setting.LineSpacing, gg.AlignLeft)
 		textY += dc.FontHeight() * setting.LineSpacing
 	}
 

@@ -24,7 +24,7 @@ func TestOsd(t *testing.T) {
 
 	dstImg, _ := image_op.AddTextLinesToImage(imagepath, textLines, image_op.TextSetting{
 		FontPath:    utf8FontFile,
-		LineSpacing: 1,
+		LineSpacing: 1.4,
 		FontSize:    fontsize,
 		Dpi:         float64(72),
 		Position:    image_op.TextPositionOverlapTop,
