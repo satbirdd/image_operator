@@ -27,7 +27,7 @@ func TestOsd(t *testing.T) {
 		LineSpacing: 1.4,
 		FontSize:    fontsize,
 		Dpi:         float64(72),
-		Position:    image_op.TextPositionOverlapTop,
+		Position:    image_op.PositionOverlapTop,
 		Color:       &color.RGBA{255, 255, 255, 255},
 		BgColor:     &color.RGBA{0, 0, 0, 120},
 	})

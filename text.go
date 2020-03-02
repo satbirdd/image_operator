@@ -15,13 +15,13 @@ import (
 
 const (
 	// 叠加在上部
-	TextPositionOverlapTop = iota
+	PositionOverlapTop = iota
 	// 叠加在下部
-	TextPositionOverlapButton
+	PositionOverlapBottom
 	// 文字不叠加在图片上，位置在图片上面
-	TextPositionConcateTop
+	PositionConcateTop
 	// 文字不叠加在图片上，位置在图片下面
-	TextPositionConcateButton
+	PositionConcateBottom
 
 	defaultMarginTop    = 10.0
 	defaultMarginBottom = 10.0
@@ -80,10 +80,10 @@ func (st *TextSetting) Valid() (bool, error) {
 		return false, fmt.Errorf("请指定dpi参数")
 	}
 
-	if st.Position != TextPositionOverlapTop &&
-		st.Position != TextPositionOverlapButton &&
-		st.Position != TextPositionConcateTop &&
-		st.Position != TextPositionConcateButton {
+	if st.Position != PositionOverlapTop &&
+		st.Position != PositionOverlapBottom &&
+		st.Position != PositionConcateTop &&
+		st.Position != PositionConcateBottom {
 
 		return false, ErrInvalidPosition
 	}
@@ -188,7 +188,7 @@ func calcualteBounds(dc *gg.Context, img image.Image, textLines []string, settin
 	}
 
 	switch setting.Position {
-	case TextPositionOverlapTop:
+	case PositionOverlapTop:
 		return Bounds{
 			X:     img.Bounds().Dx(),
 			Y:     img.Bounds().Dy(),
@@ -197,7 +197,7 @@ func calcualteBounds(dc *gg.Context, img image.Image, textLines []string, settin
 			ImgH:  img.Bounds().Dy(),
 			TextH: int(textHeight),
 		}, newLines, nil
-	case TextPositionOverlapButton:
+	case PositionOverlapBottom:
 		return Bounds{
 			X:     img.Bounds().Dx(),
 			Y:     img.Bounds().Dy(),
@@ -206,7 +206,7 @@ func calcualteBounds(dc *gg.Context, img image.Image, textLines []string, settin
 			ImgH:  img.Bounds().Dy(),
 			TextH: int(textHeight),
 		}, newLines, nil
-	case TextPositionConcateTop:
+	case PositionConcateTop:
 		return Bounds{
 			X:     img.Bounds().Dx(),
 			Y:     img.Bounds().Dy() + int(textHeight),
@@ -215,7 +215,7 @@ func calcualteBounds(dc *gg.Context, img image.Image, textLines []string, settin
 			ImgH:  img.Bounds().Dy(),
 			TextH: int(textHeight),
 		}, newLines, nil
-	case TextPositionConcateButton:
+	case PositionConcateBottom:
 		return Bounds{
 			X:     img.Bounds().Dx(),
 			Y:     img.Bounds().Dy() + int(textHeight),
